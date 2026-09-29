@@ -2,7 +2,7 @@
 // It deliberately contains no MCP/LLM dependency.
 export function createRepPlusDispatcher(d) {
   const { state, actions, extractEndpoints, extractParameters, scanForSecrets,
-    generateAttackRequests, sendRawRequest, workspace, capture, attackSurface, evidence, preview } = d;
+    generateAttackRequests, sendRawRequest, workspace, capture, attackSurface, evidence, preview, editor } = d;
   const jobs=new Map();
 
   const byId=(id)=> (state.requests||[]).find((x,i)=>String(x.id??x.request?.id??i)===String(id));
@@ -26,7 +26,7 @@ export function createRepPlusDispatcher(d) {
     info:()=>({version:"1",upstreamVersion:d.version??"unknown",capabilities:[
       "history","capture-settings","multi-tab","replay","response-history","timeline","starring","color-tags","blocking",
       "forwarding","workspace-clear","workspace-import","workspace-export","undo-redo","bulk-replay","bulk-job-control",
-      "extract-secrets","extract-endpoints","extract-parameters","response-search","attack-surface","evidence-screenshot","html-preview"
+      "extract-secrets","extract-endpoints","extract-parameters","response-search","attack-surface","evidence-screenshot","html-preview","request-editor"
     ]}),
     history:()=>state.requests||[],
     async action(name,p={}) {
@@ -45,8 +45,10 @@ export function createRepPlusDispatcher(d) {
         case "blocking-state": return {enabled:Boolean(state.blockRequests),queue:state.blockedQueue||[]};
         case "blocking": state.blockRequests=Boolean(p.enabled);return {enabled:state.blockRequests};
         case "forward": return actions.blocking?.forward?.(p.requestId);
-        case "undo": return actions.history?.undo?.();
-        case "redo": return actions.history?.redo?.();
+        case "get-request-editor": return editor.get(p.requestId);
+        case "edit-request": return editor.set(p.requestId,p.rawRequest);
+        case "undo": return editor.undo(p.requestId);
+        case "redo": return editor.redo(p.requestId);
         case "bulk-replay": return bulk(p);
         case "bulk-control": {const j=jobs.get(p.jobId);if(!j)throw new Error("Job not found");if(p.command==="pause"){j.pause=true;j.status="paused";}if(p.command==="resume"){j.pause=false;j.status="running";}if(p.command==="stop"){j.stop=true;}return j;}
         case "export-workspace": return workspace.export();
