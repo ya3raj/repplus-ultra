@@ -1,22 +1,24 @@
-# rep+ Codex / ChatGPT skill
+# rep+ multi-client MCP skill
 
-Use the `repplus-codex` MCP tools to inspect HTTP traffic captured by rep+ directly, without requiring Burp Suite or a Burp MCP server.
+Use repplus-codex to inspect traffic captured by rep+ directly. rep+ is the authoritative browser capture/replay workspace; MCP provides structured agent access.
 
-## Workflow
+## Passive workflow
+1. Start with `repplus_info`, `get_site_map`, or `list_http_history` scoped to the authorized host.
+2. Inventory with `list_endpoints`, `list_parameters`, `extract_endpoints`, `extract_parameters`, and `extract_secrets`.
+3. Search with `search_http_history` and `search_responses`.
+4. Treat `find_reflections` as a lead generator, not a vulnerability verdict.
+5. Fetch evidence with `get_http_exchange`; retrieve large bodies progressively with `get_request_body` and `get_response_body`.
+6. Correlate with timeline, response history, response comparison, stars/tags and attack-surface analysis.
+7. Use rendering, conversion and copy tools for non-mutating inspection.
 
-1. Start with `get_site_map` or `list_http_history` scoped to the user-authorized host.
-2. Use `list_endpoints` and `list_parameters` to construct an observed attack-surface inventory.
-3. Use `search_http_history` for specific technologies, headers, tokens, routes, or response patterns.
-4. Use `find_reflections` only as a lead generator. Reflection by itself is not proof of XSS or another vulnerability.
-5. Fetch exact exchanges with `get_http_exchange` before making a finding.
-6. Use `compare_responses` for passive comparison of observed behavior.
-7. Use `replay_request` only when the user has authorized active testing and replay is explicitly enabled in the local MCP configuration.
+## Active workflow
+Only after authorized active testing is enabled, use replay, blocking/forwarding, workspace mutations, or `bulk_replay`. Bulk modes mirror Rep+: Sniper, Battering Ram, Pitchfork and Cluster Bomb.
 
-## Analysis principles
-
-- Prefer evidence from captured requests/responses over assumptions.
-- Correlate related requests across the whole history rather than treating each request independently.
-- Distinguish observations, hypotheses, and verified findings.
-- Preserve exact request ids so the user can reproduce conclusions in rep+.
-- Avoid sending captured secrets to unrelated third parties.
-- Keep testing within the user's authorized scope.
+## Principles
+- Prefer captured evidence over assumptions.
+- Keep testing inside the user's authorized scope.
+- Distinguish observations, hypotheses and verified findings.
+- Do not treat scanner/reflection hits as confirmed vulnerabilities without context.
+- Avoid unnecessary disclosure of captured credentials or secrets.
+- Prefer bounded retrieval over loading complete histories into model context.
+- Keep active operations disabled by default.
