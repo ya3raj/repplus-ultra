@@ -10,7 +10,7 @@ export class RepPlusDirectBridge implements RepPlusBridge {
   searchHistory(query:string,filter:HistoryFilter={}){return this.listHistory({...filter,text:query});}
   replay(id:string,overrides:ReplayOptions){this.active();return this.action<HttpExchange>("replay",{id,...overrides});}
   action<T=unknown>(name:string,payload:unknown={}):Promise<T>{
-    const mutating=new Set(["replay","bulk-replay","bulk-control","blocking","forward","clear-workspace","import-workspace","undo","redo","tag","star","multi-tab"]);
+    const mutating=new Set(["replay","bulk-replay","bulk-control","blocking","forward","clear-workspace","import-workspace","edit-request","undo","redo","tag","star","multi-tab"]);
     if(mutating.has(name))this.active();
     return this.broker.command<T>("action",name,payload);
   }
