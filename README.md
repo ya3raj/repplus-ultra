@@ -52,6 +52,17 @@ Large HTTP bodies are retrieved progressively: history/search omit bodies, excha
 - `docs/` architecture, parity and client documentation
 - `test/` transforms, bounded-output, broker and MCP interoperability tests
 
+
+## Acknowledgements
+
+### Special thanks to rep+
+
+RepPlus Ultra exists because of **rep+**, the open-source Chrome DevTools HTTP request manipulation and security-testing project created by **Bour Abdelhadi (@bscript)**. The original idea, browser-native HTTP analysis workflow, and much of the capability model that inspired RepPlus Ultra come from rep+.
+
+RepPlus Ultra extends that workflow to MCP-compatible AI clients such as Claude, Codex and ChatGPT — and we want the origin of the idea to be clear. Huge thanks to Bour Abdelhadi and the rep+ project for building and open-sourcing the foundation and inspiration behind this project.
+
+Upstream project: https://github.com/repplus/rep-chrome
+
 ## Status
 
 The TypeScript build and stdio MCP interoperability suite pass in CI. Browser-dependent capabilities still require a Rep+ extension build containing the companion integration and the relevant browser permissions; those cannot be simulated by the Node-only CI job.
