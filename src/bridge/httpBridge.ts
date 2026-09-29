@@ -43,7 +43,7 @@ export class RepPlusHttpBridge implements RepPlusBridge {
   }
 
   private requireActive() {
-    if (process.env.REPPLUS_ALLOW_ACTIVE !== "1" && process.env.REPPLUS_ALLOW_REPLAY !== "1")
+    if (!["1","true"].includes((process.env.REPPLUS_ALLOW_ACTIVE ?? "").toLowerCase()) && !["1","true"].includes((process.env.REPPLUS_ALLOW_REPLAY ?? "").toLowerCase()))
       throw new Error("Active rep+ operations are disabled. Set REPPLUS_ALLOW_ACTIVE=1 to enable them.");
   }
 
