@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "repplus": {
+      "command": "node",
+      "args": ["./dist/index.js"],
+      "env": {
+        "REPPLUS_ALLOW_ACTIVE": "0",
+        "REPPLUS_EXTENSION_PORT": "8765"
+      }
+    }
+  }
+}
