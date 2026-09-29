@@ -1,11 +1,11 @@
 {
-  "name": "repplus-codex",
+  "name": "repplus-ultra",
   "version": "0.2.0",
   "private": false,
   "type": "module",
   "description": "Multi-client MCP server exposing rep+ HTTP history and security analysis to Claude, Codex and ChatGPT.",
   "bin": {
-    "repplus-codex": "dist/index.js"
+    "repplus-ultra": "dist/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
