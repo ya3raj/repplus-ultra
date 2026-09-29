@@ -1,6 +1,6 @@
 # rep+ multi-client MCP skill
 
-Use repplus-codex to inspect traffic captured by rep+ directly. rep+ is the authoritative browser capture/replay workspace; MCP provides structured agent access.
+Use RepPlus Ultra to inspect traffic captured by rep+ directly. rep+ is the authoritative browser capture/replay workspace; MCP provides structured agent access.
 
 ## Passive workflow
 1. Start with `repplus_info`, `get_site_map`, or `list_http_history` scoped to the authorized host.
