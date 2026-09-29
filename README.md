@@ -1,11 +1,11 @@
-# repplus-codex
+# RepPlus Ultra
 
 Multi-client MCP access to HTTP traffic and security-analysis capabilities captured by rep+. No Burp Suite or Burp MCP dependency is required.
 
 ## Architecture
 
 ```text
-Browser traffic → rep+ DevTools extension → loopback companion/broker → repplus-codex MCP → Claude / Codex / compatible MCP hosts
+Browser traffic → rep+ DevTools extension → loopback companion/broker → repplus-ultra MCP → Claude / Codex / compatible MCP hosts
 ```
 
 rep+ remains authoritative for browser capture, replay and workspace state. The MCP server exposes that state to agents while keeping passive analysis the default.
