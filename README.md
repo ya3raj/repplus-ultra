@@ -47,3 +47,13 @@ Early scaffold. The next milestone is wiring the bridge to rep+'s actual interna
 ## Security model
 
 The server is designed for authorized testing. Read-only history access should be the default. Active replay must be explicitly enabled and should be scope-restricted by host.
+
+## Rep+ parity surface
+
+The MCP server now registers the identified rep+ capability surface: capture/history/search, replay, response history, timeline, stars/tags, multi-tab controls, blocking/forwarding, undo/redo, workspace import/export/clear, endpoint/parameter/Kingfisher extraction, attack-surface analysis, Sniper/Battering Ram/Pitchfork/Cluster Bomb bulk replay and job control, response rendering/diffing, converters, copy-as-code, HTML preview and evidence capture.
+
+Browser/state-dependent operations are delegated to `repplus-companion/dispatcher.js`; pure transforms run in the MCP process. The companion must be bound to the exact upstream modules by its host/bootstrap. Features that require browser permissions (notably multi-tab capture and screenshot/evidence functions) remain subject to browser permission/extension APIs.
+
+### Completion semantics
+
+A registered MCP tool is not considered end-to-end complete until the installed rep+ build supplies the corresponding companion dependency and transport. See `docs/FEATURE_PARITY.md` for the parity contract.
