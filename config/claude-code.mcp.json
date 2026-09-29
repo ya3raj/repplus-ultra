@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "repplus": {
+    "repplus-ultra": {
       "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/repplus-codex/dist/index.js"],
+      "args": ["/ABSOLUTE/PATH/TO/repplus-ultra/dist/index.js"],
       "env": {
         "REPPLUS_ALLOW_ACTIVE": "0",
         "REPPLUS_EXTENSION_PORT": "8765"
