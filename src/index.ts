@@ -3,6 +3,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { RepPlusHttpBridge } from "./bridge/httpBridge.js";
 import { endpointInventory, parameterInventory, reflections } from "./tools/analysis.js";
+import { registerParityTools } from "./tools/parity.js";
+import { convertValue, copyRequestAs, renderBody } from "./tools/transforms.js";
 
 const bridge = new RepPlusHttpBridge();
 const server = new McpServer({ name: "repplus-codex", version: "0.1.0" });
@@ -105,4 +107,17 @@ server.tool(
   async ({ id, ...overrides }) => json(await bridge.replay(id, overrides)),
 );
 
+server.tool("convert_value","Use rep+ compatible Base64, URL, JWT or hex conversion.",{
+  kind:z.enum(["base64-encode","base64-decode","url-encode","url-decode","jwt-decode","hex-encode","hex-decode"]),value:z.string()
+},async({kind,value})=>json(convertValue(kind,value)));
+
+server.tool("copy_request_as","Render a captured request as common client code.",{
+  requestId:z.string(),format:z.enum(["curl","powershell","python","fetch"])
+},async({requestId,format})=>{const x=await bridge.getExchange(requestId);return json(x?copyRequestAs(x,format):{error:"Request not found"});});
+
+server.tool("render_response","Render response body in raw, pretty, or hex form.",{
+  requestId:z.string(),mode:z.enum(["raw","pretty","hex"])
+},async({requestId,mode})=>{const x=await bridge.getExchange(requestId);return json(x?renderBody(x,mode):{error:"Request not found"});});
+
+registerParityTools(server,bridge);
 await server.connect(new StdioServerTransport());
