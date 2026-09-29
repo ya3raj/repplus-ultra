@@ -57,3 +57,11 @@ Browser/state-dependent operations are delegated to `repplus-companion/dispatche
 ### Completion semantics
 
 A registered MCP tool is not considered end-to-end complete until the installed rep+ build supplies the corresponding companion dependency and transport. See `docs/FEATURE_PARITY.md` for the parity contract.
+
+## Clients
+
+First-class local MCP targets are Claude Code, Claude Desktop, Codex and other stdio MCP clients. Claude examples live under `config/`; `docs/CLAUDE.md` covers setup and the local-vs-remote security boundary. A Claude Desktop MCPB manifest and packaging script live under `mcpb/` and `scripts/build-mcpb.mjs`.
+
+HTTP history output is progressive: list/search operations omit bodies, individual exchange retrieval includes only previews, and `get_request_body` / `get_response_body` provide bounded chunks with continuation offsets.
+
+The project currently tracks the maintained MCP TypeScript SDK v1 line for broad host interoperability while preserving stdio. The architecture is ready for the split v2 SDK migration; that migration should be performed as a dedicated compatibility change because the v2 registration API and 2026 protocol serving entry points differ from v1.
