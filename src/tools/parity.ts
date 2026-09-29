@@ -35,8 +35,14 @@ export function registerParityTools(server:McpServer, bridge:RepPlusBridge) {
   server.tool("forward_blocked_request","Forward one blocked request.",
     {requestId:z.string()},async(args)=>json(await bridge.action("forward",args)));
 
-  server.tool("undo_request_edit","Undo the most recent rep+ request edit.",{},async()=>json(await bridge.action("undo")));
-  server.tool("redo_request_edit","Redo the most recently undone rep+ request edit.",{},async()=>json(await bridge.action("redo")));
+  server.tool("get_request_editor","Read the current raw request text from the selected rep+ request editor.",
+    {requestId:z.string()},async(args)=>json(await bridge.action("get-request-editor",args)));
+  server.tool("edit_request","Replace the selected rep+ request editor content. The captured request remains immutable; the edit is undoable and is what Rep+ will replay.",
+    {requestId:z.string(),rawRequest:z.string().min(1).max(2_000_000)},async(args)=>json(await bridge.action("edit-request",args)));
+  server.tool("undo_request_edit","Undo the most recent edit in the selected rep+ request editor.",
+    {requestId:z.string()},async(args)=>json(await bridge.action("undo",args)));
+  server.tool("redo_request_edit","Redo the most recently undone edit in the selected rep+ request editor.",
+    {requestId:z.string()},async(args)=>json(await bridge.action("redo",args)));
 
   server.tool("bulk_replay","Run rep+'s Intruder-style replay engine.",
     {requestId:z.string(),attackType:z.enum(["sniper","battering-ram","pitchfork","cluster-bomb"]),
