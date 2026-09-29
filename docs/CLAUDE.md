@@ -1,6 +1,6 @@
 # Claude support
 
-repplus-codex is a local stdio MCP server, which is the appropriate transport for Claude Code and local Claude Desktop MCP integrations. The server keeps captured traffic local and talks to the rep+ extension through a loopback-only broker.
+repplus-ultra is a local stdio MCP server, which is the appropriate transport for Claude Code and local Claude Desktop MCP integrations. The server keeps captured traffic local and talks to the rep+ extension through a loopback-only broker.
 
 ## Claude Code
 
