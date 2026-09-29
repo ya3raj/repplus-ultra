@@ -6,6 +6,7 @@ import { RepPlusDirectBridge } from "./bridge/directBridge.js";
 import { endpointInventory, parameterInventory, reflections } from "./tools/analysis.js";
 import { registerParityTools } from "./tools/parity.js";
 import { convertValue, copyRequestAs, renderBody } from "./tools/transforms.js";
+import { bodyChunk, historySummary } from "./tools/output.js";
 
 const bridge = process.env.REPPLUS_TRANSPORT === "http" ? new RepPlusHttpBridge() : new RepPlusDirectBridge();
 const server = new McpServer({ name: "repplus-codex", version: "0.1.0" });
@@ -23,21 +24,21 @@ server.tool(
     limit: z.number().int().min(1).max(1000).default(100),
     offset: z.number().int().min(0).default(0),
   },
-  async (args) => json(await bridge.listHistory(args)),
+  async (args) => json(historySummary(await bridge.listHistory(args))),
 );
 
 server.tool(
   "get_http_exchange",
   "Fetch one captured request/response pair by rep+ history id.",
   { id: z.string() },
-  async ({ id }) => json(await bridge.getExchange(id)),
+  async ({ id }) => { const x=await bridge.getExchange(id); if(!x)return json(null); return json({request:{...x.request,body:x.request.body?.slice(0,4096)},response:x.response?{...x.response,body:x.response.body?.slice(0,4096)}:undefined,bodyPreviewBytes:4096}); },
 );
 
 server.tool(
   "search_http_history",
   "Search captured URLs, headers and bodies in rep+ history.",
   { query: z.string(), host: z.string().optional(), limit: z.number().int().min(1).max(1000).default(100) },
-  async ({ query, ...filter }) => json(await bridge.searchHistory(query, filter)),
+  async ({ query, ...filter }) => json(historySummary(await bridge.searchHistory(query, filter))),
 );
 
 server.tool(
@@ -119,6 +120,14 @@ server.tool("copy_request_as","Render a captured request as common client code."
 server.tool("render_response","Render response body in raw, pretty, or hex form.",{
   requestId:z.string(),mode:z.enum(["raw","pretty","hex"])
 },async({requestId,mode})=>{const x=await bridge.getExchange(requestId);return json(x?renderBody(x,mode):{error:"Request not found"});});
+
+server.tool("get_request_body","Read a bounded chunk of one captured request body.",{
+  requestId:z.string(),offset:z.number().int().min(0).default(0),length:z.number().int().min(1).max(65536).default(4096)
+},async({requestId,offset,length})=>{const x=await bridge.getExchange(requestId);return json(x?bodyChunk(x.request.body,offset,length):{error:"Request not found"});});
+
+server.tool("get_response_body","Read a bounded chunk of one captured response body.",{
+  requestId:z.string(),offset:z.number().int().min(0).default(0),length:z.number().int().min(1).max(65536).default(4096)
+},async({requestId,offset,length})=>{const x=await bridge.getExchange(requestId);return json(x?bodyChunk(x.response?.body,offset,length):{error:"Request not found"});});
 
 registerParityTools(server,bridge);
 await server.connect(new StdioServerTransport());
