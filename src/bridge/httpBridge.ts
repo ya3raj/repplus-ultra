@@ -35,7 +35,7 @@ export class RepPlusHttpBridge implements RepPlusBridge {
   }
 
   action<T = unknown>(name: string, payload: unknown = {}): Promise<T> {
-    const active = new Set(["bulk-replay","bulk-control","blocking","forward","clear-workspace","import-workspace","undo","redo","tag","star"]);
+    const active = new Set(["bulk-replay","bulk-control","blocking","forward","clear-workspace","import-workspace","edit-request","undo","redo","tag","star"]);
     if (active.has(name)) this.requireActive();
     return this.request(new URL(`/v1/actions/${encodeURIComponent(name)}`, this.baseUrl), {
       method: "POST", body: JSON.stringify(payload),
