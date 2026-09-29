@@ -1,67 +1,57 @@
 # repplus-codex
 
-Direct Codex / ChatGPT access to HTTP history captured by rep+ — no Burp Suite, Burp MCP, or third-party proxy bridge required.
+Multi-client MCP access to HTTP traffic and security-analysis capabilities captured by rep+. No Burp Suite or Burp MCP dependency is required.
 
 ## Architecture
 
 ```text
-Browser traffic
-   ↓
-rep+ DevTools extension
-   ↓
-rep+ bridge API
-   ↓
-repplus-codex MCP server
-   ↓
-Codex / ChatGPT
+Browser traffic → rep+ DevTools extension → loopback companion/broker → repplus-codex MCP → Claude / Codex / compatible MCP hosts
 ```
 
-rep+ remains the capture and replay surface. `repplus-codex` exposes a structured tool interface over rep+'s captured HTTP history so an agent can inspect, search, correlate, and analyze observed traffic.
+rep+ remains authoritative for browser capture, replay and workspace state. The MCP server exposes that state to agents while keeping passive analysis the default.
 
-## Initial tool surface
+## Capabilities
 
-- `list_http_history`
-- `get_request`
-- `get_response`
-- `search_history`
-- `list_endpoints`
-- `list_parameters`
-- `find_reflections`
-- `get_site_map`
-- `compare_responses`
-- `analyze_history`
-- `replay_request` (explicitly enabled; intended for authorized testing)
+History listing/search, exact exchange retrieval, bounded request/response body reads, site maps, endpoint/parameter/reflection analysis, native endpoint/parameter/Kingfisher extractors, response search/history/diff/rendering, timeline, stars/tags, capture and multi-tab controls, blocking/forwarding, undo/redo, workspace import/export/clear, attack-surface analysis, evidence/HTML preview, conversions, copy-as-code, request replay, and Sniper/Battering Ram/Pitchfork/Cluster Bomb bulk replay with job controls.
 
-## Repository layout
-
-- `src/` MCP server implementation
-- `src/bridge/` rep+ bridge client and transport contract
-- `src/tools/` MCP tool definitions
-- `skill/` Codex/ChatGPT agent instructions
-- `docs/` protocol and architecture notes
-
-## Status
-
-Early scaffold. The next milestone is wiring the bridge to rep+'s actual internal history storage/message bus and validating the contract against the current rep+ extension.
-
-## Security model
-
-The server is designed for authorized testing. Read-only history access should be the default. Active replay must be explicitly enabled and should be scope-restricted by host.
-
-## Rep+ parity surface
-
-The MCP server now registers the identified rep+ capability surface: capture/history/search, replay, response history, timeline, stars/tags, multi-tab controls, blocking/forwarding, undo/redo, workspace import/export/clear, endpoint/parameter/Kingfisher extraction, attack-surface analysis, Sniper/Battering Ram/Pitchfork/Cluster Bomb bulk replay and job control, response rendering/diffing, converters, copy-as-code, HTML preview and evidence capture.
-
-Browser/state-dependent operations are delegated to `repplus-companion/dispatcher.js`; pure transforms run in the MCP process. The companion must be bound to the exact upstream modules by its host/bootstrap. Features that require browser permissions (notably multi-tab capture and screenshot/evidence functions) remain subject to browser permission/extension APIs.
-
-### Completion semantics
-
-A registered MCP tool is not considered end-to-end complete until the installed rep+ build supplies the corresponding companion dependency and transport. See `docs/FEATURE_PARITY.md` for the parity contract.
+See `docs/FEATURE_PARITY.md` for the Rep+ parity contract.
 
 ## Clients
 
-First-class local MCP targets are Claude Code, Claude Desktop, Codex and other stdio MCP clients. Claude examples live under `config/`; `docs/CLAUDE.md` covers setup and the local-vs-remote security boundary. A Claude Desktop MCPB manifest and packaging script live under `mcpb/` and `scripts/build-mcpb.mjs`.
+- Claude Code: project configuration in `.mcp.json` and `config/claude-code.mcp.json`.
+- Claude Desktop: configuration in `config/claude-desktop.json`; MCPB packaging lives under `mcpb/`.
+- Codex/ChatGPT and other MCP hosts: use the same stdio MCP server where local MCP is supported.
 
-HTTP history output is progressive: list/search operations omit bodies, individual exchange retrieval includes only previews, and `get_request_body` / `get_response_body` provide bounded chunks with continuation offsets.
+## Build and test
 
-The project currently tracks the maintained MCP TypeScript SDK v1 line for broad host interoperability while preserving stdio. The architecture is ready for the split v2 SDK migration; that migration should be performed as a dedicated compatibility change because the v2 registration API and 2026 protocol serving entry points differ from v1.
+```sh
+npm install
+npm run build
+npm test
+```
+
+For a Claude Desktop bundle:
+
+```sh
+npm run pack:mcpb
+```
+
+## Security defaults
+
+The extension broker binds to `127.0.0.1`. Set `REPPLUS_BRIDGE_TOKEN` to authenticate extension/broker traffic. Active network/workspace mutations are disabled unless `REPPLUS_ALLOW_ACTIVE=1` (or `true`) is explicitly configured. Do not expose the loopback broker as a public remote MCP endpoint.
+
+Large HTTP bodies are retrieved progressively: history/search omit bodies, exchange retrieval returns bounded previews, and `get_request_body` / `get_response_body` return chunks with continuation offsets.
+
+## Repository layout
+
+- `src/` MCP server, bridge and tools
+- `repplus-companion/` Rep+ browser-side dispatcher/bootstrap/transport
+- `config/` client configuration examples
+- `mcpb/` Claude Desktop MCP Bundle manifest
+- `skill/` agent usage guidance
+- `docs/` architecture, parity and client documentation
+- `test/` transforms, bounded-output, broker and MCP interoperability tests
+
+## Status
+
+The TypeScript build and stdio MCP interoperability suite pass in CI. Browser-dependent capabilities still require a Rep+ extension build containing the companion integration and the relevant browser permissions; those cannot be simulated by the Node-only CI job.
