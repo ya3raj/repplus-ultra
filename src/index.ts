@@ -2,11 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { RepPlusHttpBridge } from "./bridge/httpBridge.js";
+import { RepPlusDirectBridge } from "./bridge/directBridge.js";
 import { endpointInventory, parameterInventory, reflections } from "./tools/analysis.js";
 import { registerParityTools } from "./tools/parity.js";
 import { convertValue, copyRequestAs, renderBody } from "./tools/transforms.js";
 
-const bridge = new RepPlusHttpBridge();
+const bridge = process.env.REPPLUS_TRANSPORT === "http" ? new RepPlusHttpBridge() : new RepPlusDirectBridge();
 const server = new McpServer({ name: "repplus-codex", version: "0.1.0" });
 
 const json = (value: unknown) => ({ content: [{ type: "text" as const, text: JSON.stringify(value, null, 2) }] });
