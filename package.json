@@ -29,5 +29,11 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=20"
+    }
   }
 }
