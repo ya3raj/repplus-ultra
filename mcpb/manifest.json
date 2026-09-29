@@ -1,10 +1,10 @@
 {
   "manifest_version": "0.3",
-  "name": "repplus",
-  "display_name": "RepPlus MCP",
+  "name": "repplus-ultra",
+  "display_name": "RepPlus Ultra",
   "version": "0.2.0",
   "description": "Local MCP access to HTTP traffic and security-analysis features captured by rep+.",
-  "author": { "name": "repplus-codex contributors" },
+  "author": { "name": "RepPlus Ultra contributors" },
   "server": { "type": "node", "entry_point": "server/index.js" },
   "compatibility": { "runtimes": { "node": ">=20" } },
   "user_config": {
