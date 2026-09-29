@@ -9,7 +9,7 @@ import { convertValue, copyRequestAs, renderBody } from "./tools/transforms.js";
 import { bodyChunk, historySummary } from "./tools/output.js";
 
 const bridge = process.env.REPPLUS_TRANSPORT === "http" ? new RepPlusHttpBridge() : new RepPlusDirectBridge();
-const server = new McpServer({ name: "repplus-codex", version: "0.1.0" });
+const server = new McpServer({ name: "repplus-codex", version: "0.2.0" });
 
 const json = (value: unknown) => ({ content: [{ type: "text" as const, text: JSON.stringify(value, null, 2) }] });
 
