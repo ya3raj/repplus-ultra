@@ -1,0 +1,31 @@
+{
+  "manifest_version": "0.3",
+  "name": "repplus",
+  "display_name": "RepPlus MCP",
+  "version": "0.2.0",
+  "description": "Local MCP access to HTTP traffic and security-analysis features captured by rep+.",
+  "author": { "name": "repplus-codex contributors" },
+  "server": { "type": "node", "entry_point": "server/index.js" },
+  "compatibility": { "runtimes": { "node": ">=20" } },
+  "user_config": {
+    "allow_active": {
+      "type": "boolean",
+      "title": "Allow active testing operations",
+      "description": "Permit replay, bulk replay and workspace/network mutations.",
+      "default": false
+    },
+    "extension_port": {
+      "type": "number",
+      "title": "Rep+ extension bridge port",
+      "default": 8765
+    }
+  },
+  "mcp_config": {
+    "command": "node",
+    "args": ["${__dirname}/server/index.js"],
+    "env": {
+      "REPPLUS_ALLOW_ACTIVE": "${user_config.allow_active}",
+      "REPPLUS_EXTENSION_PORT": "${user_config.extension_port}"
+    }
+  }
+}
