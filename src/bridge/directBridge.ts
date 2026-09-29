@@ -14,5 +14,5 @@ export class RepPlusDirectBridge implements RepPlusBridge {
     if(mutating.has(name))this.active();
     return this.broker.command<T>("action",name,payload);
   }
-  private active(){if(process.env.REPPLUS_ALLOW_ACTIVE!=="1"&&process.env.REPPLUS_ALLOW_REPLAY!=="1")throw new Error("Active rep+ operations are disabled.");}
+  private active(){if(!["1","true"].includes((process.env.REPPLUS_ALLOW_ACTIVE||"").toLowerCase())&&!["1","true"].includes((process.env.REPPLUS_ALLOW_REPLAY||"").toLowerCase()))throw new Error("Active rep+ operations are disabled.");}
 }
