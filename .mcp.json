@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "repplus": {
+    "repplus-ultra": {
       "command": "node",
       "args": ["./dist/index.js"],
       "env": {
